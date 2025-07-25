@@ -13,6 +13,7 @@
  *
  **/
 
+#include "anki/cozmo/shared/cozmoConfig.h"
 #include "coretech/common/shared/array2d_impl.h"
 #include "coretech/common/engine/utils/timer.h"
 #include "coretech/common/engine/utils/data/dataPlatform.h"
@@ -450,10 +451,10 @@ namespace Vector {
     // Do this after the ProceduralFace class has set to use the right neutral face
     _proceduralTrackComponent->Init(*this);
 
-    _faceDrawBuf.Allocate(FACE_DISPLAY_HEIGHT, FACE_DISPLAY_WIDTH);
-    _procFaceImg.Allocate(FACE_DISPLAY_HEIGHT, FACE_DISPLAY_WIDTH);
-    _faceImageRGB565.Allocate(FACE_DISPLAY_HEIGHT, FACE_DISPLAY_WIDTH);
-    _faceImageGrayscale.Allocate(FACE_DISPLAY_HEIGHT, FACE_DISPLAY_WIDTH);
+    _faceDrawBuf.Allocate(static_cast<int16_t>(FACE_DISPLAY_HEIGHT), static_cast<int16_t>(FACE_DISPLAY_WIDTH));
+    _procFaceImg.Allocate(static_cast<int16_t>(FACE_DISPLAY_HEIGHT), static_cast<int16_t>(FACE_DISPLAY_WIDTH));
+    _faceImageRGB565.Allocate(static_cast<int16_t>(FACE_DISPLAY_HEIGHT), static_cast<int16_t>(FACE_DISPLAY_WIDTH));
+    _faceImageGrayscale.Allocate(static_cast<int16_t>(FACE_DISPLAY_HEIGHT), static_cast<int16_t>(FACE_DISPLAY_WIDTH));
 
     // Start with a blank face (face scale == 0) until the engine has initialized and sent an animation
     {
@@ -666,7 +667,7 @@ namespace Vector {
     // Expand the bit-packed msg.faceData (every bit == 1 pixel) to byte array (every byte == 1 pixel)
     static const u32 kExpectedNumPixels = FACE_DISPLAY_NUM_PIXELS/2;
     static const u32 kDataLength = sizeof(msg.faceData);
-    static_assert(8 * kDataLength == kExpectedNumPixels, "Mismatched face image and bit image sizes");
+    // static_assert(8 * kDataLength == kExpectedNumPixels, "Mismatched face image and bit image sizes");
 
     if (msg.imageId != _faceImageId) {
       if (_faceImageChunksReceivedBitMask != 0) {
@@ -698,7 +699,7 @@ namespace Vector {
     assert(destI == kExpectedNumPixels * (1+msg.chunkIndex));
 
     if (_faceImageChunksReceivedBitMask == kAllFaceImageChunksReceivedMask) {
-      auto* img = new Vision::ImageRGBA(FACE_DISPLAY_HEIGHT, FACE_DISPLAY_WIDTH);
+      auto* img = new Vision::ImageRGBA(static_cast<int16_t>(FACE_DISPLAY_HEIGHT), static_cast<int16_t>(FACE_DISPLAY_WIDTH));
       img->SetFromGray(_faceImageGrayscale);
       auto handle = std::make_shared<Vision::SpriteWrapper>(img);
       //LOG_DEBUG("AnimationStreamer.Process_displayFaceImageChunk.CompleteFaceReceived", "");
@@ -736,7 +737,7 @@ namespace Vector {
     std::copy_n(msg.faceData, numPixels, imageData_i + (msg.chunkIndex * kMaxNumPixelsPerChunk) );
 
     if (_faceImageGrayscaleChunksReceivedBitMask == kAllFaceImageGrayscaleChunksReceivedMask) {
-      auto* img = new Vision::ImageRGBA(FACE_DISPLAY_HEIGHT, FACE_DISPLAY_WIDTH);
+      auto* img = new Vision::ImageRGBA(static_cast<int16_t>(FACE_DISPLAY_HEIGHT), static_cast<int16_t>(FACE_DISPLAY_WIDTH));
       img->SetFromGray(_faceImageGrayscale);
       auto handle = std::make_shared<Vision::SpriteWrapper>(img);
       //LOG_DEBUG("AnimationStreamer.Process_displayFaceImageGrayscaleChunk.CompleteFaceReceived", "");
@@ -767,8 +768,10 @@ namespace Vector {
     const auto numPixels = std::min(msg.numPixels, kMaxNumPixelsPerChunk);
     std::copy_n(msg.faceData, numPixels, _faceImageRGB565.GetRawDataPointer() + (msg.chunkIndex * kMaxNumPixelsPerChunk) );
 
+    u32 kAllFaceImageRGBChunksReceivedMask = IsXray() ? kAllFaceImageRGBChunksReceivedMaskFor22Chunks : kAllFaceImageRGBChunksReceivedMaskFor30Chunks;
+
     if (_faceImageRGBChunksReceivedBitMask == kAllFaceImageRGBChunksReceivedMask) {
-      auto* img = new Vision::ImageRGBA(FACE_DISPLAY_HEIGHT, FACE_DISPLAY_WIDTH);
+      auto* img = new Vision::ImageRGBA(static_cast<int16_t>(FACE_DISPLAY_HEIGHT), static_cast<int16_t>(FACE_DISPLAY_WIDTH));
       img->SetFromRGB565(_faceImageRGB565);
       auto handle = std::make_shared<Vision::SpriteWrapper>(img);
       //LOG_DEBUG("AnimationStreamer.Process_displayFaceImageRGBChunk.CompleteFaceReceived", "");
@@ -1318,12 +1321,12 @@ namespace Vector {
 
   void AnimationStreamer::BufferFaceToSend(Vision::ImageRGB565& faceImg565)
   {
-    DEV_ASSERT_MSG(faceImg565.GetNumCols() == FACE_DISPLAY_WIDTH &&
-                   faceImg565.GetNumRows() == FACE_DISPLAY_HEIGHT,
+    DEV_ASSERT_MSG(faceImg565.GetNumCols() == static_cast<int16_t>(FACE_DISPLAY_WIDTH) &&
+                   faceImg565.GetNumRows() == static_cast<int16_t>(FACE_DISPLAY_HEIGHT),
                    "AnimationStreamer.BufferFaceToSend.InvalidImageSize",
                    "Got %d x %d. Expected %d x %d",
                    faceImg565.GetNumCols(), faceImg565.GetNumRows(),
-                   FACE_DISPLAY_WIDTH, FACE_DISPLAY_HEIGHT);
+                   static_cast<int16_t>(FACE_DISPLAY_WIDTH), static_cast<int16_t>(FACE_DISPLAY_HEIGHT));
 
 #if ANKI_DEV_CHEATS
     static int kProcFace_GammaType_old = (int)FaceGammaType::None;
@@ -2140,7 +2143,7 @@ namespace Vector {
     renderConfig.renderMethod = SpriteRenderMethod::CustomHue;
     // Set up sprite box layout
     CompositeImageLayer::SpriteBox sb(SpriteBoxName::FaceKeyframe, renderConfig,
-                                      Point2i(0,0), FACE_DISPLAY_WIDTH, FACE_DISPLAY_HEIGHT);
+                                      Point2i(0,0), static_cast<int16_t>(FACE_DISPLAY_WIDTH), static_cast<int16_t>(FACE_DISPLAY_HEIGHT));
     CompositeImageLayer::LayoutMap map;
     map.emplace(SpriteBoxName::FaceKeyframe, sb);
     CompositeImageLayer eyeLayer(LayerName::Procedural_Eyes, std::move(map));

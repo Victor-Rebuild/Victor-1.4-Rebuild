@@ -10,6 +10,7 @@
  *
  **/
 
+#include "anki/cozmo/shared/cozmoConfig.h"
 #include "cannedAnimLib/baseTypes/cozmo_anim_generated.h"
 #include "cannedAnimLib/proceduralFace/proceduralFace.h"
 #include "cannedAnimLib/proceduralFace/scanlineDistorter.h"
@@ -21,6 +22,11 @@
 
 namespace Anki {
 namespace Vector {
+
+const int ProceduralFace::WIDTH = FACE_DISPLAY_WIDTH;
+const int ProceduralFace::HEIGHT = FACE_DISPLAY_HEIGHT;
+const int ProceduralFace::NominalEyeHeight = IsXray() ? 50 : 57;
+const int ProceduralFace::NominalEyeWidth = IsXray() ? 40 : 43;
   
 ProceduralFace* ProceduralFace::_resetData = nullptr;
 ProceduralFace* ProceduralFace::_blankFaceData = nullptr;
