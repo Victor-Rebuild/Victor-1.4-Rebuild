@@ -14,32 +14,32 @@ fi
 VICDIR="$(pwd)"
 
 cd ~
-if [[ ! -d .anki ]]; then
-    echo "Downloading ~/.anki folder contents..."
-    git clone https://github.com/kercre123/anki-deps
-    mv anki-deps .anki
-fi
+#if [[ ! -d .anki ]]; then
+#    echo "Downloading ~/.anki folder contents..."
+#    git clone https://github.com/kercre123/anki-deps
+#    mv anki-deps .anki
+#fi
 
-if [[ ${UNAME} == "Darwin" ]]; then
-    echo "Checking out macOS branch..."
-    cd ~/.anki
-    if [[ $(uname -a) == *"arm64"* ]]; then
-        git checkout macos-arm
-    else
-        git checkout macos
-    fi
-    git lfs install
-    git lfs pull
-else
-    if [[ $(uname -a) == *"aarch64"* ]]; then
-       cd ~/.anki
-       git checkout arm64-linux
-    fi
-fi
+#if [[ ${UNAME} == "Darwin" ]]; then
+#    echo "Checking out macOS branch..."
+#    cd ~/.anki
+#    if [[ $(uname -a) == *"arm64"* ]]; then
+#        git checkout macos-arm
+#    else
+#        git checkout macos
+#    fi
+#    git lfs install
+#    git lfs pull
+#else
+#    if [[ $(uname -a) == *"aarch64"* ]]; then
+#       cd ~/.anki
+#       git checkout arm64-linux
+#    fi
+#fi
 
 cd "${VICDIR}"
 
-git lfs update --force
+#git lfs update --force
 
 if [[ ! -d EXTERNALS/ ]]; then
     echo "Downloading EXTERNALS folder contents..."

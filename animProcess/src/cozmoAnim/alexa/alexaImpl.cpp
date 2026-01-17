@@ -66,6 +66,7 @@
 #include <CBLAuthDelegate/CBLAuthDelegate.h>
 #include <CBLAuthDelegate/SQLiteCBLAuthDelegateStorage.h>
 #include <Notifications/SQLiteNotificationsStorage.h>
+#include <Settings/Storage/SQLiteDeviceSettingStorage.h>
 #include <Settings/SQLiteSettingStorage.h>
 #include <CapabilitiesDelegate/CapabilitiesDelegate.h>
 #include <SQLiteStorage/SQLiteMiscStorage.h>
@@ -320,8 +321,7 @@ void AlexaImpl::InitThread()
   }
   
   if( !avsCommon::avs::initialization::AlexaClientSDKInit::initialize( configs ) ) {
-    CRITICAL_SDK("Failed to initialize SDK!");
-    _initState = InitState::ThreadFailed;
+    FailInitialization( "Failed to initialize SDK!" );
     return;
   }
   
@@ -355,8 +355,7 @@ void AlexaImpl::InitThread()
   // Creating the deviceInfo object
   std::shared_ptr<avsCommon::utils::DeviceInfo> deviceInfo = avsCommon::utils::DeviceInfo::create( rootConfig );
   if( !deviceInfo ) {
-    CRITICAL_SDK("Creation of DeviceInfo failed!");
-    _initState = InitState::ThreadFailed;
+    FailInitialization( "Creation of DeviceInfo failed!" );
     return;
   }
   else {
@@ -378,8 +377,7 @@ void AlexaImpl::InitThread()
   // Creating the misc DB object to be used by various components.
   std::shared_ptr<storage::sqliteStorage::SQLiteMiscStorage> miscStorage = storage::sqliteStorage::SQLiteMiscStorage::create(rootConfig);
   if( !miscStorage ) {
-    CRITICAL_SDK("Creation of miscStorage failed!");
-    _initState = InitState::ThreadFailed;
+    FailInitialization( "Creation of miscStorage failed!" );
     return;
   }
   
@@ -387,8 +385,7 @@ void AlexaImpl::InitThread()
   std::shared_ptr<avsCommon::utils::libcurlUtils::HttpPut> httpPut = avsCommon::utils::libcurlUtils::HttpPut::create();
   
   if( !authDelegate ) {
-    CRITICAL_SDK("Creation of AuthDelegate failed!");
-    _initState = InitState::ThreadFailed;
+    FailInitialization( "Creation of AuthDelegate failed!" );
     return;
   }
   authDelegate->addAuthObserver( _observer );
@@ -403,8 +400,7 @@ void AlexaImpl::InitThread()
                                                           rootConfig,
                                                           deviceInfo );
   if( !_capabilitiesDelegate ) {
-    CRITICAL_SDK("Creation of CapabilitiesDelegate failed!");
-    _initState = InitState::ThreadFailed;
+    FailInitialization( "Creation of CapabilitiesDelegate failed!" );
     return;
   }
   _capabilitiesDelegate->addCapabilitiesObserver( _observer );
@@ -414,7 +410,10 @@ void AlexaImpl::InitThread()
   auto notificationsStorage
     = capabilityAgents::notifications::SQLiteNotificationsStorage::create( rootConfig );
   
+  // settings (DEPRECATED)
   auto settingsStorage = capabilityAgents::settings::SQLiteSettingStorage::create( rootConfig );
+  // settings
+  auto deviceSettingsStorage = settings::storage::SQLiteDeviceSettingStorage::create( rootConfig );
   
   // Creating the alert storage object to be used for rendering and storing alerts.
   auto audioFactory = std::make_shared<AlexaAudioFactory>();
@@ -447,8 +446,7 @@ void AlexaImpl::InitThread()
   // does provide an accurate internet status on init
   auto internetConnectionMonitor = avsCommon::utils::network::InternetConnectionMonitor::create(httpContentFetcherFactory);
   if( !internetConnectionMonitor ) {
-    CRITICAL_SDK("Failed to create InternetConnectionMonitor");
-    _initState = InitState::ThreadFailed;
+    FailInitialization( "Failed to create InternetConnectionMonitor" );
     return;
   }
   
@@ -462,6 +460,7 @@ void AlexaImpl::InitThread()
                                  std::move(alertStorage),
                                  std::move(notificationsStorage),
                                  std::move(settingsStorage),
+                                 std::move(deviceSettingsStorage),
                                  audioFactory,
                                  {_observer},
                                  {_observer},
@@ -479,8 +478,7 @@ void AlexaImpl::InitThread()
                                  firmwareVersion );
   
   if( !_client ) {
-    CRITICAL_SDK("Failed to create SDK client!");
-    _initState = InitState::ThreadFailed;
+    FailInitialization( "Failed to create SDK client!" );
     return;
   }
   
@@ -496,6 +494,15 @@ void AlexaImpl::InitThread()
   auto revokeObserver = std::make_shared<AlexaRevokeAuthObserver>( _client->GetRegistrationManager() );
   _client->AddRevokeAuthorizationObserver( revokeObserver );
 
+  _settingsCallbacks = settings::SettingCallbacks<settings::DeviceSettingsManager>::create( _client->GetSettingsManager() );
+  if( ANKI_VERIFY(_settingsCallbacks != nullptr, "AlexaImpl.InitThead.NoCallbacks","Could not create settings callbacks") ) {
+    _settingsCallbacks->add<settings::DeviceSettingsIndex::DO_NOT_DISTURB>( [](bool enable, settings::SettingNotifications notifications) {
+      // todo: handle do not disturb setting
+      LOG_INFO("AlexaImpl.InitThead.SettingsCallback", "Set DO_NOT_DISTURB=%d", enable);
+    });
+  }
+
+
   // Creating the buffer (Shared Data Stream) that will hold user audio data. This is the main input into the SDK.
   size_t bufferSize = avsCommon::avs::AudioInputStream::calculateBufferSize( kBufferSize,
                                                                              kWordSize,
@@ -505,8 +512,7 @@ void AlexaImpl::InitThread()
     = avsCommon::avs::AudioInputStream::create( buffer, kWordSize, kMaxReaders );
 
   if( !sharedDataStream ) {
-    CRITICAL_SDK("Failed to create shared data stream!");
-    _initState = InitState::ThreadFailed;
+    FailInitialization( "Failed to create shared data stream!" );
     return;
   }
 
@@ -1579,6 +1585,17 @@ bool AlexaImpl::InteractedRecently() const
   return recent;
 }
   
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+void AlexaImpl::FailInitialization( const std::string& reason )
+{
+  CRITICAL_SDK( reason.c_str() );
+  _initState = InitState::ThreadFailed;
+
+  DASMSG(alexa_initialization_fail, "alexa.initialization_failed", "we failed to fully initialize the sdk");
+  DASMSG_SET(s1, reason.c_str(), "Reason");
+  DASMSG_SEND();
+}
+
 #if ANKI_DEV_CHEATS
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void AlexaImpl::ConfirmShutdown()

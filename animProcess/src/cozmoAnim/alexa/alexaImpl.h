@@ -47,6 +47,8 @@
 #include <Alerts/AlertObserverInterface.h>
 #include <CBLAuthDelegate/CBLAuthRequesterInterface.h>
 #include <AVSCommon/AVS/IndicatorState.h>
+#include <Settings/DeviceSettingsManager.h>
+#include <Settings/SettingCallbacks.h>
 
 #include <functional>
 #include <string>
@@ -185,6 +187,8 @@ private:
   // if the watchdog fires, this function attempts to remedy the situation
   void AttemptToFixStuckInSpeakingBug();
   
+  void FailInitialization( const std::string& reason );
+
   // readable version int
   alexaClientSDK::avsCommon::sdkInterfaces::softwareInfo::FirmwareVersion GetFirmwareVersion() const;
   
@@ -239,6 +243,8 @@ private:
   
   std::shared_ptr<alexaClientSDK::capabilitiesDelegate::CapabilitiesDelegate> _capabilitiesDelegate;
   
+  std::shared_ptr<alexaClientSDK::settings::SettingCallbacks<alexaClientSDK::settings::DeviceSettingsManager>> _settingsCallbacks;
+
   std::shared_ptr<AlexaMediaPlayer> _ttsMediaPlayer;
   std::shared_ptr<AlexaMediaPlayer> _alertsMediaPlayer;
   std::shared_ptr<AlexaMediaPlayer> _audioMediaPlayer;

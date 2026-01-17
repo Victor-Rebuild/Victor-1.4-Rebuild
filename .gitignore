@@ -240,7 +240,7 @@ UnityDASDll/UnityDASDll/bin/*
 .idea
 
 # Anki specific
-EXTERNALS
+#EXTERNALS
 TAGS
 .subtreeconfig
 
