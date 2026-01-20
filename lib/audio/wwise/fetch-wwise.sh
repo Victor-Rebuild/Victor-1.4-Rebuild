@@ -51,13 +51,14 @@ fi
 logv "Install required? $NEEDS_INSTALL"
 
 if [ $NEEDS_INSTALL -eq 1 ]; then
-    DROPBOX_ARCHIVE_PATH="${HOME}/Dropbox\ \(Anki\,\ Inc\)/Anki\ Software\ Engineering/dist/wwise/wwise-$VERSION.tar.bz2"
+    DROPBOX_ARCHIVE_PATH="${HOME}/Dropbox\ \(Anki\,\ Inc\)/Anki\ Software\ Engineering/dist/wwise/wwise-$VERSION.tar.gz"
 
     if [ -f "${DROPBOX_ARCHIVE_PATH}" ]; then
         ARCHIVE_PATH="${DROPBOX_ARCHIVE_PATH}"
     fi
 
-    DL_ARCHIVE_PATH="${HOME}/Downloads/wwise-$VERSION.tar.bz2"
+    DL_ARCHIVE_PATH="${HOME}/Downloads/wwise-$VERSION.tar.gz"
+     mkdir -p `dirname ${DL_ARCHIVE_PATH}`
     : ${ARCHIVE_PATH:="${DL_ARCHIVE_PATH}"}
 
     WWISE_ARCHIVE="${ARCHIVE_PATH}"
@@ -93,8 +94,8 @@ if [ $NEEDS_INSTALL -eq 1 ]; then
     done
     
 
-    logv "tar xjvf "${WWISE_ARCHIVE}" -C "${WWISE_SDK_ROOT}" --strip-components 1"
-    tar xjvf "${WWISE_ARCHIVE}" -C "${WWISE_SDK_ROOT}" --strip-components 1
+    logv "tar xzvf "${WWISE_ARCHIVE}" -C "${WWISE_SDK_ROOT}" --strip-components 1"
+    tar xzvf "${WWISE_ARCHIVE}" -C "${WWISE_SDK_ROOT}" --strip-components 1
     chmod -R 555 "${WWISE_SDK_ROOT}"
     find "${WWISE_SDK_ROOT}/../" -type d -exec chmod 755 {} \;
     echo "Wwise installed at ${WWISE_SDK_ROOT}"
