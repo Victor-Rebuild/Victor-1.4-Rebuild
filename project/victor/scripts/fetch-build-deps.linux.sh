@@ -53,8 +53,8 @@ vlog "CMake"
 vlog "Go"
 ./tools/build/tools/ankibuild/go.py
 
-vlog "git lfs"
-$GIT lfs install
+#vlog "git lfs"
+#$GIT lfs install
 
 vlog "Build output dirs"
 mkdir -p generated
