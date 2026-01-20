@@ -351,7 +351,7 @@ namespace Anki {
     }
 
     int megapixels() {
-      return IsXray() ? 2 : 1;
+      return Factory::IsXray() ? 2 : 1;
     }
 
     void CameraService::CameraSetCaptureFormat(Vision::ImageEncoding format)

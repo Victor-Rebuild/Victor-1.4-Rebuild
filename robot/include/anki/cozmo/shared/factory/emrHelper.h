@@ -21,6 +21,8 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#define NO_WARN_UNUSED    __attribute__((unused))
+
 namespace Anki {
 namespace Vector {
 
@@ -93,7 +95,7 @@ namespace Factory {
   // Write data of size len into the EMR at offset
   // Ex: WriteEMR(offsetof(Factory::EMR, playpen)/sizeof(uint32_t), buf, sizeof(buf));
   //     to write buf in the playpen member of the EMR
-  static void WriteEMR(size_t offset, void* data, size_t len)
+  static void NO_WARN_UNUSED WriteEMR(size_t offset, void* data, size_t len)
   {
     #ifdef SIMULATOR
     return;
@@ -112,7 +114,7 @@ namespace Factory {
     }
   }
 
-  static void WriteEMR(size_t offset, uint32_t data)
+  static void NO_WARN_UNUSED WriteEMR(size_t offset, uint32_t data)
   {
     #ifdef SIMULATOR
     return;
@@ -147,6 +149,11 @@ namespace Factory {
     }
 
     return _emr;
+  }
+
+  static inline const bool IsXray()
+  {
+    return (Factory::GetEMR()->fields.HW_VER >= 0x20);
   }
 }
 

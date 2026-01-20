@@ -175,7 +175,7 @@ void FaceInfoScreen::DrawMenuHorizontal(Vision::ImageRGB565& img) const
 
 void FaceInfoScreen::DrawMenu(Vision::ImageRGB565& img) const
 {
-  if (IsXray()) {
+  if (Factory::IsXray()) {
     DrawMenuHorizontal(img);
   } else {
     DrawMenuVertical(img);

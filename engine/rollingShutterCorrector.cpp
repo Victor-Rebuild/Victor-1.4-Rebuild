@@ -26,7 +26,7 @@ namespace Anki {
     }
 
     int RollingShutterCorrector::GetNumDivisions() {
-      if (IsXray()) {
+      if (Factory::IsXray()) {
 	      return _rsNumDivisionsXray ;
       } else {
 	      return _rsNumDivisions;

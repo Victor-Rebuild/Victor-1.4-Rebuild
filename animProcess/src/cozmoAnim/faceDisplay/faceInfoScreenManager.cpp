@@ -289,9 +289,9 @@ void FaceInfoScreenManager::Init(AnimContext* context, AnimationStreamer* animSt
 
   ADD_MENU_ITEM(Main, "EXIT", None);
 #if ENABLE_SELF_TEST
-  ADD_MENU_ITEM(Main, IsXray() ? "TEST" : "SELF TEST", SelfTest);
+  ADD_MENU_ITEM(Main, Factory::IsXray() ? "TEST" : "SELF TEST", SelfTest);
 #endif
-  ADD_MENU_ITEM(Main, IsXray() ? "CLEAR" : "CLEAR USER DATA", ClearUserData);
+  ADD_MENU_ITEM(Main, Factory::IsXray() ? "CLEAR" : "CLEAR USER DATA", ClearUserData);
 
   // === Self test screen ===
   ADD_MENU_ITEM(SelfTest, "EXIT", Main);
@@ -1497,7 +1497,7 @@ void FaceInfoScreenManager::DrawAlexaFace()
   static const ColorRGBA& kTextColor            = NamedColors::WHITE;
   static const int        kTextSpacing          = 14;
   static const int        kTextLineThickness    = 1;
-  float      kDefaultTextScale     = IsXray() ? 0.3f : 0.4f;
+  float      kDefaultTextScale     = Factory::IsXray() ? 0.3f : 0.4f;
 
   // draw the alexa icon ...
 
@@ -1535,7 +1535,7 @@ void FaceInfoScreenManager::DrawAlexaFace()
     case ScreenName::AlexaPairingSuccess:
     {
       textVec.push_back( { "You're ready to use Alexa." } );
-      if (IsXray()) {
+      if (Factory::IsXray()) {
         textVec.push_back( { "Check out the Alexa App." } );
       } else {
         textVec.push_back( { "Check out the Alexa App" } );
@@ -1548,7 +1548,7 @@ void FaceInfoScreenManager::DrawAlexaFace()
     case ScreenName::AlexaPairingExpired:
     {
       textVec.push_back( { "The code has expired." } );
-      if (IsXray()) {
+      if (Factory::IsXray()) {
         textVec.push_back( { "Try again" } );
       } else {
         textVec.push_back( { "Retry to generate" } );
@@ -1645,7 +1645,7 @@ void FaceInfoScreenManager::DrawTextOnScreen(const std::vector<std::string>& tex
   // TODO: Expose line and location(?) as arguments
   const u8  textLineThickness = 8;
 
-  textScale = IsXray() ? textScale - 0.05f : textScale;
+  textScale = Factory::IsXray() ? textScale - 0.05f : textScale;
 
   for(const auto& text : textVec)
   {

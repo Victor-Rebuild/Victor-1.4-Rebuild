@@ -1993,7 +1993,7 @@ namespace Vision {
   }
 
   void ImageRGB::ConvertToShowableFormat(cv::Mat& showImg) const {
-    if (Vector::IsXray()) {
+    if (Vector::Factory::IsXray()) {
       this->get_CvMat_().copyTo(showImg);
     } else {
       cv::cvtColor(this->get_CvMat_(), showImg, cv::COLOR_RGB2BGR);

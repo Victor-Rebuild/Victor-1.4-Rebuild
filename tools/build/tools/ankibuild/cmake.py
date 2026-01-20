@@ -101,7 +101,7 @@ def setup_cmake(required_ver):
 
 def parseArgs(scriptArgs):
     version = '1.0'
-    default_cmake_version = "3.9.6"
+    default_cmake_version = "3.19.3"
     parser = argparse.ArgumentParser(description='finds or installs cmake', version=version)
     parser.add_argument('--install-cmake',
                         nargs='?',

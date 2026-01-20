@@ -290,7 +290,7 @@ Result MirrorModeManager::CreateMirrorModeImage(const Vision::ImageRGB& cameraIm
     }
   }
   
-  if (IsXray()) {
+  if (Factory::IsXray()) {
     visionProcResult.mirrorModeImg.SetFromImageRGB2BGR(_screenImg, _gammaLUT);
   } else {
     visionProcResult.mirrorModeImg.SetFromImageRGB(_screenImg, _gammaLUT);
