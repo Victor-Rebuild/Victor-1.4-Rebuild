@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # This scrip will copy and configure  Wwise include headers and SDK files
 # needed for Mac OS X, iOS and Android platforms. Pass the platform include

@@ -13,8 +13,6 @@
 
 #include "PitchTrackerAbstractClass.h"
 #include <vector>
-#include <float.h>
-#include <cfloat>
 
 class McLeod : public PitchTrackerAbstractClass
 {

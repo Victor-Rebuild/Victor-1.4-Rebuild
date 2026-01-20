@@ -17,7 +17,6 @@
  */
 
 
-#include <functional>
 #include "audioEngine/plugins/wavePortalPlugIn.h"
 #include "audioEngine/plugins/wavePortalFxTypes.h"
 #include "AK/SoundEngine/Common/AkTypes.h"

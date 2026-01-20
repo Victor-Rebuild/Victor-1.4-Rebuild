@@ -52,6 +52,7 @@ namespace AudioEngine {
   
 const char* AudioEngineController::kLogChannelName = "Audio";
 
+static std::mutex sCallbackQueueMutex;
 static std::vector<std::pair<AudioCallbackContext*, std::unique_ptr<const AudioCallbackInfo>>> sCallbackQueue;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

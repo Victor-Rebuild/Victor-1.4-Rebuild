@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 function arg_help() {
   echo "Usage: $0 [-h] [-p {ios/mac}] [-f OUTPUT_DIR] "

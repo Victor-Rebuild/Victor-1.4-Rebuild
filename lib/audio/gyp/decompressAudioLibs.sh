@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 SRCDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 

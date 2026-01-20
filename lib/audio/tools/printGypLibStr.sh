@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 MAC_IOS_LIB_DIR=$1
 ANDROID_LIB_DIR=$2
