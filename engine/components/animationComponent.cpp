@@ -47,8 +47,8 @@ namespace {
 
   const u32 kMaxNumAvailableAnimsToReportPerTic = 1000;
 
-  static const u32 kNumImagePixels     = FACE_DISPLAY_HEIGHT * FACE_DISPLAY_WIDTH;
-  static const u32 kNumHalfImagePixels = kNumImagePixels / 2;
+  // static const u32 kNumImagePixels     = FACE_DISPLAY_HEIGHT * FACE_DISPLAY_WIDTH;
+  // static const u32 kNumHalfImagePixels = kNumImagePixels / 2;
 }
   
 CONSOLE_VAR(f32, kEyeDartFocusValue_pix, "Animation", 1.0f);

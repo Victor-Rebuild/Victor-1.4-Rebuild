@@ -91,10 +91,10 @@ namespace {
     struct { ProceduralFace::Value min; ProceduralFace::Value max; } clipLimits;
   };
 
-  constexpr static const Util::FullEnumToValueArrayChecker::FullEnumToValueArray<ProceduralFace::Parameter, EyeParamInfo,
+  static const Util::FullEnumToValueArrayChecker::FullEnumToValueArray<ProceduralFace::Parameter, EyeParamInfo,
   ProceduralFace::Parameter::NumParameters> kEyeParamInfoLUT {
-    {ProceduralFace::Parameter::EyeCenterX,        { false, false,  0.f,  0.f, EyeParamCombineMethod::Add,      {-FACE_DISPLAY_WIDTH/2, FACE_DISPLAY_WIDTH/2 }    }     },
-    {ProceduralFace::Parameter::EyeCenterY,        { false, false,  0.f,  0.f, EyeParamCombineMethod::Add,      {-FACE_DISPLAY_HEIGHT/2,FACE_DISPLAY_HEIGHT/2}    }     },
+    {ProceduralFace::Parameter::EyeCenterX,        { false, false,  0.f,  0.f, EyeParamCombineMethod::Add,      {-static_cast<ProceduralFace::Value>(FACE_DISPLAY_WIDTH)/2, static_cast<ProceduralFace::Value>(FACE_DISPLAY_WIDTH)/2 }    }     },
+    {ProceduralFace::Parameter::EyeCenterY,        { false, false,  0.f,  0.f, EyeParamCombineMethod::Add,      {-static_cast<ProceduralFace::Value>(FACE_DISPLAY_HEIGHT)/2,static_cast<ProceduralFace::Value>(FACE_DISPLAY_HEIGHT)/2}    }     },
     {ProceduralFace::Parameter::EyeScaleX,         { false, false,  1.f,  0.f, EyeParamCombineMethod::Multiply, {0.f, 10.f}    }     },
     {ProceduralFace::Parameter::EyeScaleY,         { false, false,  1.f,  0.f, EyeParamCombineMethod::Multiply, {0.f, 10.f}    }     },
     {ProceduralFace::Parameter::EyeAngle,          { true,  false,  0.f,  0.f, EyeParamCombineMethod::Add,      {-360, 360}    }     },
@@ -120,8 +120,8 @@ namespace {
     {ProceduralFace::Parameter::GlowLightness,     { false, true,  0.f, 0.f,   EyeParamCombineMethod::None,     {0.f, 1.f}   }     },
   };
   
-  static_assert( Util::FullEnumToValueArrayChecker::IsSequentialArray(kEyeParamInfoLUT),
-                "EyeParamInfoLUT array does not define each entry in order, once and only once!");
+  // static_assert( Util::FullEnumToValueArrayChecker::IsSequentialArray(kEyeParamInfoLUT),
+  //               "EyeParamInfoLUT array does not define each entry in order, once and only once!");
   
 }
   

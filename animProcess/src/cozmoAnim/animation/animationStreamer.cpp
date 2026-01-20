@@ -340,14 +340,14 @@ namespace Vector {
 
       if(s_frameFilename.find(".gif") != std::string::npos) {
         s_gifVersion = 1;
-        s_gif1 = jo_gif_start(cacheFilename.c_str(), FACE_DISPLAY_WIDTH, FACE_DISPLAY_HEIGHT, 0, 256);
+        s_gif1 = jo_gif_start(cacheFilename.c_str(), static_cast<int16_t>(FACE_DISPLAY_WIDTH), static_cast<int16_t>(FACE_DISPLAY_HEIGHT), 0, 256);
         if(s_gif1.fp != nullptr) {
           s_framesToCapture = numFrames;
         }
 
       } else if(s_frameFilename.find(".GIF") != std::string::npos) {
         s_gifVersion = 2;
-        if (GifBegin(&s_gif2, cacheFilename.c_str(), FACE_DISPLAY_WIDTH, FACE_DISPLAY_HEIGHT, 0, 8)) {
+        if (GifBegin(&s_gif2, cacheFilename.c_str(), static_cast<int16_t>(FACE_DISPLAY_WIDTH), static_cast<int16_t>(FACE_DISPLAY_HEIGHT), 0, 8)) {
           s_framesToCapture = numFrames;
         }
 
@@ -356,10 +356,10 @@ namespace Vector {
         if(s_tga != nullptr) {
           uint8_t head[18] = {0};
           head[ 2] = 2; // uncompressed, true-color image
-          head[12] = FACE_DISPLAY_WIDTH & 0xff;
-          head[13] = (FACE_DISPLAY_WIDTH >> 8) & 0xff;
-          head[14] = FACE_DISPLAY_HEIGHT & 0xff;
-          head[15] = (FACE_DISPLAY_HEIGHT >> 8) & 0xff;
+          head[12] = static_cast<int16_t>(FACE_DISPLAY_WIDTH) & 0xff;
+          head[13] = (static_cast<int16_t>(FACE_DISPLAY_WIDTH) >> 8) & 0xff;
+          head[14] = static_cast<int16_t>(FACE_DISPLAY_HEIGHT) & 0xff;
+          head[15] = (static_cast<int16_t>(FACE_DISPLAY_HEIGHT) >> 8) & 0xff;
           head[16] = 32;   /** 32 bits depth **/
           head[17] = 0x28; /** top-down flag, 8 bits alpha **/
           fwrite(head, sizeof(uint8_t), 18, s_tga);
@@ -1156,7 +1156,7 @@ namespace Vector {
         Vision::PixelRGB565* blue_i  = outImage.GetRow(i + 2*FACE_DISPLAY_HEIGHT/3);
         for(int j=0; j<FACE_DISPLAY_WIDTH; ++j)
         {
-          const u8 value = Util::numeric_cast_clamped<u8>(std::round((f32)j/(f32)FACE_DISPLAY_WIDTH * 255.f));
+          const u8 value = Util::numeric_cast_clamped<u8>(std::round((f32)j/(f32)static_cast<int16_t>(FACE_DISPLAY_WIDTH) * 255.f));
           red_i[j]   = Vision::PixelRGB565(value, 0, 0);
           green_i[j] = Vision::PixelRGB565(0, value, 0);
           blue_i[j]  = Vision::PixelRGB565(0, 0, value);
@@ -1288,16 +1288,16 @@ namespace Vector {
       int elapsed = (end - s_frameStart)/float(CLOCKS_PER_SEC);
       s_frameStart = end;
 
-      Vision::ImageRGBA frame(FACE_DISPLAY_HEIGHT, FACE_DISPLAY_WIDTH);
+      Vision::ImageRGBA frame(static_cast<int16_t>(FACE_DISPLAY_HEIGHT), static_cast<int16_t>(FACE_DISPLAY_WIDTH));
       frame.SetFromRGB565(faceImg565);
 
       if(s_tga != NULL) {
-        fwrite(frame.GetDataPointer(), sizeof(uint8_t), FACE_DISPLAY_WIDTH*FACE_DISPLAY_HEIGHT*4, s_tga);
+        fwrite(frame.GetDataPointer(), sizeof(uint8_t), static_cast<int16_t>(FACE_DISPLAY_WIDTH)*static_cast<int16_t>(FACE_DISPLAY_HEIGHT)*4, s_tga);
       } else {
         if(s_gifVersion == 1) {
           jo_gif_frame(&s_gif1, (uint8_t*)frame.GetDataPointer(), 4, false);
         } else {
-          GifWriteFrame(&s_gif2, (uint8_t*)frame.GetDataPointer(), FACE_DISPLAY_WIDTH, FACE_DISPLAY_HEIGHT, elapsed*100);
+          GifWriteFrame(&s_gif2, (uint8_t*)frame.GetDataPointer(), static_cast<int16_t>(FACE_DISPLAY_WIDTH), static_cast<int16_t>(FACE_DISPLAY_HEIGHT), elapsed*100);
         }
       }
 
@@ -1411,9 +1411,9 @@ namespace Vector {
       OSState::getInstance()->GetMemoryInfo(info);
       if (info.alert > OSState::Alert::None) {
         const ColorRGBA& memAlertColor = (info.alert >= OSState::Alert::Red ? NamedColors::RED : NamedColors::YELLOW);
-        const Rectangle<s32> rect(FACE_DISPLAY_WIDTH-30, 0, 30, 25);
+        const Rectangle<s32> rect(static_cast<int16_t>(FACE_DISPLAY_WIDTH)-30, 0, 30, 25);
         faceImg565.DrawFilledRect(rect, memAlertColor);
-        faceImg565.DrawText({FACE_DISPLAY_WIDTH-15, 20},
+        faceImg565.DrawText({static_cast<int16_t>(FACE_DISPLAY_WIDTH)-15, 20},
                             std::to_string(info.availMem_kB/1024),
                             NamedColors::BLACK, 0.55, false, 1, true);
       }

@@ -18,6 +18,7 @@
 #include "coretech/vision/engine/image.h"
 #include "util/cladHelpers/cladEnumToStringMap.h"
 #include "util/helpers/templateHelpers.h"
+#include "anki/cozmo/shared/cozmoConfig.h"
 
 namespace Anki {
 namespace Vision {
@@ -255,6 +256,9 @@ void SpriteWrapper::LoadSprite(Image* outImage) const
               "CompositeImage.SpriteBoxImpl.Constructor.GrayLoadFailed",
               "Failed to load sprite %s",
               _fullSpritePath.c_str());
+  if(Vector::IsXray()) {
+    outImage->Resize(Vector::FACE_DISPLAY_HEIGHT, Vector::FACE_DISPLAY_WIDTH);
+  }
 }
 
 
@@ -284,6 +288,9 @@ void SpriteWrapper::LoadSprite(ImageRGBA* outImage, const HSImageHandle& hsImage
                 "CompositeImage.SpriteBoxImpl.Constructor.ColorLoadFailed",
                 "Failed to load sprite %s",
                 _fullSpritePath.c_str());
+  }
+  if(Vector::IsXray()) {
+    outImage->Resize(outImage->GetNumRows() * 80 / 96, outImage->GetNumCols() * 160 / 184);
   }
 }
 

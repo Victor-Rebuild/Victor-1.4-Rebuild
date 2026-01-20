@@ -474,14 +474,18 @@ void lcd_shutdown(void) {
   }
 
   if (lcd_fd) {
-    lcd_run_script(sleep_in);
+    lcd_run_script( lcd_display_version() == SANTEK ? sleep_in_santek : sleep_in_midas);
     close(lcd_fd);
   }
   if (DnC_PIN) {
     gpio_close(DnC_PIN);
   }
-  if (RESET_PIN) {
-    gpio_close(RESET_PIN);
+  if (RESET_PIN_1) {
+    gpio_close(RESET_PIN_1);
+  }
+
+  if (RESET_PIN_2) {
+    gpio_close(RESET_PIN_2);
   }
 
 }
