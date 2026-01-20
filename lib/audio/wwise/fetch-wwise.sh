@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 set -u
@@ -27,6 +27,19 @@ DEFAULT_WWISE_HOME="${HOME}/.anki/wwise/versions"
 : ${ANKI_WWISE_SDK_ROOT:="${ANKI_BUILD_WWISE_HOME}/${VERSION}"}
 : ${WWISE_SDK_ROOT:="${ANKI_WWISE_SDK_ROOT}"}
 
+ADEPS="$HOME/.anki"
+
+if [[ ! -d "$ADEPS/wwise/versions/2017.2.7_a" ]]; then
+    mkdir -p "$ADEPS/wwise/versions/2017.2.7_a"
+    cd "$ADEPS/wwise/versions/2017.2.7_a"
+    echo "Downloading WWise 2017.2.7_a SDK..."
+    wget -q --show-progress https://github.com/os-vector/wire-os-externals/releases/download/4.0.0-r05/wwise-2017.2.7_a.tar.gz
+    echo "Extracting WWise 2017.2.7_a SDK..."
+    tar -zxf wwise-2017.2.7_a.tar.gz
+    rm -f wwise-2017.2.7_a.tar.gz
+fi
+
+
 logv "WWISE_SDK_ROOT = ${WWISE_SDK_ROOT}"
 
 NEEDS_INSTALL=0
@@ -51,14 +64,14 @@ fi
 logv "Install required? $NEEDS_INSTALL"
 
 if [ $NEEDS_INSTALL -eq 1 ]; then
-    DROPBOX_ARCHIVE_PATH="${HOME}/Dropbox\ \(Anki\,\ Inc\)/Anki\ Software\ Engineering/dist/wwise/wwise-$VERSION.tar.gz"
+    DROPBOX_ARCHIVE_PATH="${HOME}/Dropbox\ \(Anki\,\ Inc\)/Anki\ Software\ Engineering/dist/wwise/wwise-$VERSION.tar.bz2"
 
     if [ -f "${DROPBOX_ARCHIVE_PATH}" ]; then
         ARCHIVE_PATH="${DROPBOX_ARCHIVE_PATH}"
     fi
 
-    DL_ARCHIVE_PATH="${HOME}/Downloads/wwise-$VERSION.tar.gz"
-     mkdir -p `dirname ${DL_ARCHIVE_PATH}`
+    DL_ARCHIVE_PATH="${HOME}/Downloads/wwise-$VERSION.tar.bz2"
+    mkdir -p `dirname ${DL_ARCHIVE_PATH}`
     : ${ARCHIVE_PATH:="${DL_ARCHIVE_PATH}"}
 
     WWISE_ARCHIVE="${ARCHIVE_PATH}"
@@ -94,8 +107,8 @@ if [ $NEEDS_INSTALL -eq 1 ]; then
     done
     
 
-    logv "tar xzvf "${WWISE_ARCHIVE}" -C "${WWISE_SDK_ROOT}" --strip-components 1"
-    tar xzvf "${WWISE_ARCHIVE}" -C "${WWISE_SDK_ROOT}" --strip-components 1
+    logv "tar xjvf "${WWISE_ARCHIVE}" -C "${WWISE_SDK_ROOT}" --strip-components 1"
+    tar xjvf "${WWISE_ARCHIVE}" -C "${WWISE_SDK_ROOT}" --strip-components 1
     chmod -R 555 "${WWISE_SDK_ROOT}"
     find "${WWISE_SDK_ROOT}/../" -type d -exec chmod 755 {} \;
     echo "Wwise installed at ${WWISE_SDK_ROOT}"
@@ -116,4 +129,3 @@ if [ "$(readlink $LOCAL_CURRENT_LINK)" != "$WWISE_SDK_SYMLINK" ]; then
 else
     logv "${LOCAL_CURRENT_LINK} exists"
 fi
-
