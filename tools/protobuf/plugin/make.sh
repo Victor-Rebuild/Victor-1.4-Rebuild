@@ -31,7 +31,8 @@ OUTPUT="${SCRIPT_PATH_ABSOLUTE}/protocCppPlugin"
     -L${LIBS}                         \
     ${LIBS}/libprotoc.a               \
     ${LIBS}/libprotobuf.a             \
-    -lpthread
+    -lpthread                         \
+    -no-pie
 
 popd >> /dev/null
 
