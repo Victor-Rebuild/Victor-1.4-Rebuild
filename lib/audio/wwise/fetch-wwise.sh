@@ -58,7 +58,6 @@ if [ $NEEDS_INSTALL -eq 1 ]; then
     fi
 
     DL_ARCHIVE_PATH="${HOME}/Downloads/wwise-$VERSION.tar.bz2"
-    mkdir -p `dirname ${DL_ARCHIVE_PATH}`
     : ${ARCHIVE_PATH:="${DL_ARCHIVE_PATH}"}
 
     WWISE_ARCHIVE="${ARCHIVE_PATH}"

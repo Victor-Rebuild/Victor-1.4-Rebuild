@@ -98,7 +98,8 @@ AK_DECLARE_THREAD_ROUTINE(AlsaSinkAudioThread)
 	// Setup the thread's affinity mask
 	AkThreadProperties threadProp;
 	threadProp.dwAffinityMask = pAlsaSinkDevice->m_uCpuMask;
-	int error = AK_THREAD_INIT_CODE(threadProp);
+	AK_THREAD_INIT_CODE(threadProp);
+	int error = 0;
 	if (error != 0) {
 		AK_LOG_ERROR("SetAffinityMask Error %d", error);
 	}
