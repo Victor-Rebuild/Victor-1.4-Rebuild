@@ -1,3 +1,5 @@
+# Absolutely HUGE thanks to Switch_Modder/Emily for getting this building.
+
 # victor (aka Vector)
 
 `victor` is the _code name_ for the next iteration of the Cozmo product line. This repo contains code for the embedded firmware (syscon), robotics, animation, engine, and app layers.
