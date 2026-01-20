@@ -435,6 +435,7 @@ if [ $CONFIGURE -eq 1 ]; then
         -DGOROOT=${GOROOT} \
         -DPROTOBUF_HOME=${PROTOBUF_HOME} \
         -DANKI_BUILD_SHA=${ANKI_BUILD_SHA} \
+        -DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
         ${EXPORT_FLAGS} \
         ${FEATURE_FLAGS} \
         ${DEFINES} \
@@ -468,6 +469,10 @@ else
   if [[ "$PLATFORM" == "vicos" && $RUN_INSTALL -eq 1 ]]; then
     # run install target on robot-platforms
     $CMAKE_EXE --build . --target install
+    cp -f compile_commands.json ../../../
+    echo "-- Copied compile_commands.json"
+    ../../../tools/build/build-scripts/gen-clangd.sh
+    echo "-- Generated .clangd"
   fi
 fi
 

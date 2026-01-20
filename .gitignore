@@ -6,6 +6,8 @@
 *.cache
 *.swp
 matlab.mat
+compile_commands.json
+.clangd
 
 _build*/
 
