@@ -28,7 +28,7 @@ echo
 echo "Deploying... you may see some scary warnings, these can be ignored."
 echo
 
-./project/victor/scripts/victor_deploy.sh -c Release -ib
+./project/victor/scripts/victor_deploy.sh -c Release -f
 
 echo
 echo "That appears to have been successful. Starting anki-robot.target..."
