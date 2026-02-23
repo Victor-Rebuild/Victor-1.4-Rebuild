@@ -134,18 +134,18 @@ void BehaviorOnboardingLookAtPhone::BehaviorUpdate()
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 void BehaviorOnboardingLookAtPhone::MoveHeadUp()
 {
-  if(_hasBleKeys) {
+  /*if(_hasBleKeys) {
     GetBehaviorComp<OnboardingMessageHandler>().ShowUrlFace(false);
     auto* action = new TriggerLiftSafeAnimationAction{ AnimationTrigger::OnboardingLookAtPhoneUp };
     action->SetRenderInEyeHue( false );
     DelegateIfInControl(action, [this](const ActionResult& res){
       RunLoopAction();
     });
-  } else {
+  } else {*/
     MoveHeadToAngleAction* action = new MoveHeadToAngleAction(MAX_HEAD_ANGLE);
     DelegateIfInControl(action);
     GetBehaviorComp<OnboardingMessageHandler>().ShowUrlFace(true);
-  }
+  //}
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

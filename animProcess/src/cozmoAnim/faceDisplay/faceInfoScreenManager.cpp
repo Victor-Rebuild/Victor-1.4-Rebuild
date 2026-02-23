@@ -58,12 +58,16 @@
 #include <fstream>
 #include <iomanip>
 #include <thread>
+#include <sys/stat.h>
+#include <string>
 
 #ifndef SIMULATOR
 #include <linux/reboot.h>
 #include <sys/reboot.h>
 #endif
 
+const std::string OSProject = "1.4-Rebuild";
+const std::string OSBranch = "main";
 
 // Log options
 #define LOG_CHANNEL    "FaceInfoScreenManager"
@@ -1240,15 +1244,16 @@ void FaceInfoScreenManager::DrawMain()
 
   const std::string hwVer    = "HW: "   + std::to_string(Factory::GetEMR()->fields.HW_VER);
 
-  const std::string osVer    = "OS: "   + osstate->GetOSBuildVersion() +
-                                          (FACTORY_TEST ? " (V4)" : "") +
-                                          (osstate->IsInRecoveryMode() ? " U" : "");
+  const std::string osProject    = "OS: " + OSProject;
+
+  // osVer will be sha if deployed build
+  std::string osVer = "VER: " + osstate->GetOSBuildVersion();
 
   const std::string ssid     = "SSID: " + osstate->GetSSID(true);
 
-#if ANKI_DEV_CHEATS
+/*#if ANKI_DEV_CHEATS
   const std::string sha      = "SHA: "  + osstate->GetBuildSha();
-#endif
+#endif*/
 
   std::string ip             = osstate->GetIPAddress();
   if (ip.empty()) {
@@ -1258,16 +1263,17 @@ void FaceInfoScreenManager::DrawMain()
   // ESN/serialNo and the HW version are drawn on the same line with serialNo default left aligned and
   // HW version right aligned.
   ColoredTextLines lines = { { {serialNo}, {hwVer, NamedColors::WHITE, false} },
-                             {osVer}, 
+                             {osVer},
+                             {osProject}, 
                              {ssid}, 
 #if FACTORY_TEST
                              {"IP: " + ip},
 #else
                              { {"IP: "}, {ip, (osstate->IsValidIPAddress(ip) ? NamedColors::GREEN : NamedColors::RED)} },
 #endif
-#if ANKI_DEV_CHEATS
+/*#if ANKI_DEV_CHEATS
 			     {sha},
-#endif
+#endif*/
                            };
 
   DrawTextOnScreen(lines);
